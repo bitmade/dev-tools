@@ -1,0 +1,50 @@
+{
+  "name": "bitmade-dev-tools",
+  "version": "1.0.0",
+  "description": "A package that contains development tools used at Bitmade.",
+  "main": "index.js",
+  "author": "Manuel Moritz-Schliesing <manuel@bitmade.de>",
+  "license": "MIT",
+  "bin": {
+    "bitmade-dev-server": "./bin/bitmade-dev-server.js",
+    "bitmade-project-export": "./bin/bitmade-project-export.js"
+  },
+  "scripts": {
+    "watch": "babel src -d dist -w",
+    "build": "babel src -d dist"
+  },
+  "dependencies": {
+    "app-root-dir": "^1.0.2",
+    "autoprefixer": "^6.3.1",
+    "babel-core": "^6.4.5",
+    "babel-loader": "^6.2.1",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
+    "browser-sync": "^2.11.1",
+    "browser-sync-webpack-plugin": "^1.0.1",
+    "commander": "^2.9.0",
+    "express": "^4.13.3",
+    "express-handlebars": "^2.0.1",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "file-exists": "^1.0.0",
+    "front-matter": "^2.0.5",
+    "fs-extra": "^0.26.4",
+    "fs-finder": "^1.8.1",
+    "js-yaml": "^3.5.2",
+    "lodash": "^4.0.0",
+    "marked": "^0.3.5",
+    "node-sass": "^3.4.2",
+    "path-exists": "^2.1.0",
+    "postcss-assets": "^3.0.3",
+    "postcss-loader": "^0.8.0",
+    "raw-loader": "^0.5.1",
+    "sass-loader": "^3.1.2",
+    "style-loader": "^0.13.0",
+    "webpack": "^1.12.11",
+    "webpack-dev-middleware": "^1.4.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.4.0",
+    "babel-preset-es2015": "^6.3.13"
+  }
+}
