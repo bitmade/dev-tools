@@ -22,7 +22,7 @@ exports.default = function () {
     env: process.env.NODE_ENV == 'production' ? 'production' : 'development',
     buildAssets: false,
     settingsFile: 'site.yml',
-    contentDir: 'content',
+    contentPath: 'content',
     handlebars: {
       extname: '.hbs',
       defaultLayout: 'base'
@@ -31,9 +31,7 @@ exports.default = function () {
       staticPath: 'public',
       viewsPath: 'views'
     },
-    webpack: {
-      config: _path2.default.join(__dirname, 'createConfig.js')
-    },
+    webpackConfig: _path2.default.join(options.context, 'webpack.config.js'),
     webpackDevMiddleware: {
       publicPath: '/build/',
       stats: {

@@ -1,26 +1,21 @@
 #! /usr/bin/env node
-
 var path = require('path');
 var program = require('commander');
-var createServer = require('../index').createServer;
+var DevServer = require('../index').DevServer;
 
 program
   .version('0.0.1')
-  .option('--webpack-config <file>', 'Path to wWebpack configuration file')
+  .option('--context <file>', 'This is process.cwd() when called from the root dir.')
+  .option('--webpack-config <file>', 'Path to Webpack configuration file')
   .option('--build-assets', 'Set to true if assets should be written to the filesystem.')
   .parse(process.argv);
 
-var options = {
-  context: process.cwd(),
-  buildAssets: program.buildAssets
-};
+var context = program.context
+  ? program.context
+  : process.cwd();
 
-if (program.webpackConfig) {
-  options.webpack = {
-    config: path.resolve(program.webpackConfig),
-  }
-}
+var webpackConfig = program.webpackConfig
+  ? path.resolve(program.webpackConfig)
+  : path.join(context, 'webpack.config.js');
 
-var server = createServer(options);
-
-server.listen(3010);
+new DevServer(context, webpackConfig, program.buildAssets).listen(3010);
