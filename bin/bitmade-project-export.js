@@ -5,9 +5,11 @@ var Exporter = require('../index').Exporter;
 
 program
   .version('0.0.1')
+  .option('--compile-assets')
+  .option('--compile-templates')
   .parse(process.argv);
 
-new Exporter(
+var exporter = new Exporter(
   process.cwd(),
   'views',
   'site.yml',
@@ -16,4 +18,7 @@ new Exporter(
   'public',
   'base',
   path.join(process.cwd(), 'webpack.config.js')
-).run();
+);
+
+program.compileAssets && exporter.runAssetCompiler();
+program.compileTemplates && exporter.runTemplateRenderer();

@@ -9,8 +9,16 @@ export default class Exporter {
     this.renderer = new Renderer(context, viewsPath, settingsFile, contentDir, viewsExtension, publicPath, defaultLayout);
   }
 
-  run() {
+  runAssetCompiler() {
     this.compiler.run();
+  }
+
+  runTemplateRenderer() {
     this.renderer.run();
+  }
+
+  runAll() {
+    this.runAssetCompiler();
+    this.runTemplateRenderer();
   }
 }

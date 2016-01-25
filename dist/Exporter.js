@@ -31,10 +31,20 @@ var Exporter = function () {
   }
 
   _createClass(Exporter, [{
-    key: 'run',
-    value: function run() {
+    key: 'runAssetCompiler',
+    value: function runAssetCompiler() {
       this.compiler.run();
+    }
+  }, {
+    key: 'runTemplateRenderer',
+    value: function runTemplateRenderer() {
       this.renderer.run();
+    }
+  }, {
+    key: 'runAll',
+    value: function runAll() {
+      this.runAssetCompiler();
+      this.runTemplateRenderer();
     }
   }]);
 
