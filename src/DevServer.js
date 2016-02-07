@@ -13,7 +13,7 @@ export default class DevServer {
     this.server = new Server(this.context);
 
     // Build temporary assets using the Webpack dev middleware.
-    this.buildAssets ? this.server.use(this.compiler.middleware()) : this.compiler.watch();
+    this.buildAssets ? this.compiler.watch() : this.server.use(this.compiler.middleware());
   }
 
   listen(port) {

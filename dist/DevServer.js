@@ -36,7 +36,7 @@ var DevServer = function () {
     this.server = new _Server2.default(this.context);
 
     // Build temporary assets using the Webpack dev middleware.
-    this.buildAssets ? this.server.use(this.compiler.middleware()) : this.compiler.watch();
+    this.buildAssets ? this.compiler.watch() : this.server.use(this.compiler.middleware());
   }
 
   _createClass(DevServer, [{
