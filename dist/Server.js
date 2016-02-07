@@ -22,6 +22,10 @@ var _expressHandlebars = require('express-handlebars');
 
 var _expressHandlebars2 = _interopRequireDefault(_expressHandlebars);
 
+var _templatesHelpers = require('./templatesHelpers');
+
+var _templatesHelpers2 = _interopRequireDefault(_templatesHelpers);
+
 var _DataDiscoverer = require('./DataDiscoverer');
 
 var _DataDiscoverer2 = _interopRequireDefault(_DataDiscoverer);
@@ -74,6 +78,7 @@ var Server = function () {
       var rawExtname = options.viewExtension.substr(1);
 
       app.engine(rawExtname, (0, _expressHandlebars2.default)({
+        helpers: _templatesHelpers2.default,
         extname: options.viewExtension,
         defaultLayout: options.defaultLayout
       }));

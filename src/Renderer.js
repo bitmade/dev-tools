@@ -2,6 +2,7 @@ import path from 'path';
 import handlebars  from 'express-handlebars';
 import Finder from 'fs-finder';
 import fs from 'fs-extra';
+import helpers from './templatesHelpers';
 import DataDiscoverer from './DataDiscoverer';
 
 export default class Renderer {
@@ -9,8 +10,9 @@ export default class Renderer {
   constructor(context, viewsPath, settingsFile, contentDir, viewsExtension, publicPath, defaultLayout) {
     this.context = context;
     this.hbs = new handlebars.ExpressHandlebars({
+      helpers,
+      defaultLayout,
       extname: viewsExtension,
-      defaultLayout
     });
     this.viewsPath = path.join(context, viewsPath);
     this.layoutsDir = path.relative(viewsPath, this.hbs.layoutsDir);

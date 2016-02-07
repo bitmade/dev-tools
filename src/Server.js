@@ -2,6 +2,7 @@ import path from 'path';
 import fileExists from 'file-exists';
 import express from 'express';
 import handlebars  from 'express-handlebars';
+import helpers from './templatesHelpers';
 import DataDiscoverer from './DataDiscoverer';
 
 export default class Server {
@@ -38,8 +39,9 @@ export default class Server {
     const rawExtname = options.viewExtension.substr(1);
 
     app.engine(rawExtname, handlebars({
+      helpers,
       extname: options.viewExtension,
-      defaultLayout: options.defaultLayout
+      defaultLayout: options.defaultLayout,
     }));
     app.set('view engine', rawExtname);
     app.set('views', options.viewsPath);

@@ -1,6 +1,6 @@
 {
   "name": "bitmade-dev-tools",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A package that contains development tools used at Bitmade.",
   "main": "index.js",
   "author": "Manuel Moritz-Schliesing <manuel@bitmade.de>",

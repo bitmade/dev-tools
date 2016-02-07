@@ -22,6 +22,10 @@ var _fsExtra = require('fs-extra');
 
 var _fsExtra2 = _interopRequireDefault(_fsExtra);
 
+var _templatesHelpers = require('./templatesHelpers');
+
+var _templatesHelpers2 = _interopRequireDefault(_templatesHelpers);
+
 var _DataDiscoverer = require('./DataDiscoverer');
 
 var _DataDiscoverer2 = _interopRequireDefault(_DataDiscoverer);
@@ -36,8 +40,9 @@ var Renderer = function () {
 
     this.context = context;
     this.hbs = new _expressHandlebars2.default.ExpressHandlebars({
-      extname: viewsExtension,
-      defaultLayout: defaultLayout
+      helpers: _templatesHelpers2.default,
+      defaultLayout: defaultLayout,
+      extname: viewsExtension
     });
     this.viewsPath = _path2.default.join(context, viewsPath);
     this.layoutsDir = _path2.default.relative(viewsPath, this.hbs.layoutsDir);
