@@ -10,9 +10,9 @@ var _path = require('path');
 
 var _path2 = _interopRequireDefault(_path);
 
-var _expressHandlebars = require('express-handlebars');
+var _hbsEngine = require('./hbsEngine');
 
-var _expressHandlebars2 = _interopRequireDefault(_expressHandlebars);
+var _hbsEngine2 = _interopRequireDefault(_hbsEngine);
 
 var _fsFinder = require('fs-finder');
 
@@ -21,10 +21,6 @@ var _fsFinder2 = _interopRequireDefault(_fsFinder);
 var _fsExtra = require('fs-extra');
 
 var _fsExtra2 = _interopRequireDefault(_fsExtra);
-
-var _templatesHelpers = require('./templatesHelpers');
-
-var _templatesHelpers2 = _interopRequireDefault(_templatesHelpers);
 
 var _DataDiscoverer = require('./DataDiscoverer');
 
@@ -35,19 +31,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Renderer = function () {
-  function Renderer(context, viewsPath, settingsFile, contentDir, viewsExtension, publicPath, defaultLayout) {
+  function Renderer(context, viewsPath, settingsFile, contentDir, viewExtension, publicPath, defaultLayout) {
     _classCallCheck(this, Renderer);
 
     this.context = context;
-    this.hbs = new _expressHandlebars2.default.ExpressHandlebars({
-      helpers: _templatesHelpers2.default,
-      defaultLayout: defaultLayout,
-      extname: viewsExtension
-    });
+    this.hbs = (0, _hbsEngine2.default)(context, { defaultLayout: defaultLayout, viewExtension: viewExtension, viewsPath: viewsPath });
     this.viewsPath = _path2.default.join(context, viewsPath);
     this.layoutsDir = _path2.default.relative(viewsPath, this.hbs.layoutsDir);
     this.partialsDir = _path2.default.relative(viewsPath, this.hbs.partialsDir);
-    this.viewsExtension = viewsExtension;
+    this.viewExtension = viewExtension;
     this.publicPath = publicPath;
     this.data = new _DataDiscoverer2.default(context, settingsFile, contentDir).load();
   }
@@ -55,7 +47,7 @@ var Renderer = function () {
   _createClass(Renderer, [{
     key: 'run',
     value: function run() {
-      _fsFinder2.default.from(this.viewsPath).exclude([this.layoutsDir, this.partialsDir]).findFiles(this.viewsExtension).map(this.buildTemplateInfo.bind(this)).forEach(this.renderTemplate.bind(this));
+      _fsFinder2.default.from(this.viewsPath).exclude([this.layoutsDir, this.partialsDir]).findFiles(this.viewExtension).map(this.buildTemplateInfo.bind(this)).forEach(this.renderTemplate.bind(this));
     }
   }, {
     key: 'buildTemplateInfo',

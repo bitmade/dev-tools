@@ -1,23 +1,18 @@
 import path from 'path';
-import handlebars  from 'express-handlebars';
+import hbs from './hbsEngine';
 import Finder from 'fs-finder';
 import fs from 'fs-extra';
-import helpers from './templatesHelpers';
 import DataDiscoverer from './DataDiscoverer';
 
 export default class Renderer {
 
-  constructor(context, viewsPath, settingsFile, contentDir, viewsExtension, publicPath, defaultLayout) {
+  constructor(context, viewsPath, settingsFile, contentDir, viewExtension, publicPath, defaultLayout) {
     this.context = context;
-    this.hbs = new handlebars.ExpressHandlebars({
-      helpers,
-      defaultLayout,
-      extname: viewsExtension,
-    });
+    this.hbs = hbs(context, { defaultLayout, viewExtension, viewsPath });
     this.viewsPath = path.join(context, viewsPath);
     this.layoutsDir = path.relative(viewsPath, this.hbs.layoutsDir);
     this.partialsDir = path.relative(viewsPath, this.hbs.partialsDir);
-    this.viewsExtension = viewsExtension;
+    this.viewExtension = viewExtension;
     this.publicPath = publicPath;
     this.data = new DataDiscoverer(context, settingsFile, contentDir).load();
   }
@@ -26,7 +21,7 @@ export default class Renderer {
     Finder
       .from(this.viewsPath)
       .exclude([this.layoutsDir, this.partialsDir])
-      .findFiles(this.viewsExtension)
+      .findFiles(this.viewExtension)
       .map(this.buildTemplateInfo.bind(this))
       .forEach(this.renderTemplate.bind(this));
   }

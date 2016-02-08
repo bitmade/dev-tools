@@ -1,8 +1,7 @@
 import path from 'path';
 import fileExists from 'file-exists';
 import express from 'express';
-import handlebars  from 'express-handlebars';
-import helpers from './templatesHelpers';
+import hbs from './hbsEngine';
 import DataDiscoverer from './DataDiscoverer';
 
 export default class Server {
@@ -38,11 +37,7 @@ export default class Server {
     // Get the raw extension without the dot.
     const rawExtname = options.viewExtension.substr(1);
 
-    app.engine(rawExtname, handlebars({
-      helpers,
-      extname: options.viewExtension,
-      defaultLayout: options.defaultLayout,
-    }));
+    app.engine(rawExtname, hbs(context, options).engine);
     app.set('view engine', rawExtname);
     app.set('views', options.viewsPath);
 

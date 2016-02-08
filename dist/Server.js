@@ -18,13 +18,9 @@ var _express = require('express');
 
 var _express2 = _interopRequireDefault(_express);
 
-var _expressHandlebars = require('express-handlebars');
+var _hbsEngine = require('./hbsEngine');
 
-var _expressHandlebars2 = _interopRequireDefault(_expressHandlebars);
-
-var _templatesHelpers = require('./templatesHelpers');
-
-var _templatesHelpers2 = _interopRequireDefault(_templatesHelpers);
+var _hbsEngine2 = _interopRequireDefault(_hbsEngine);
 
 var _DataDiscoverer = require('./DataDiscoverer');
 
@@ -77,11 +73,7 @@ var Server = function () {
       // Get the raw extension without the dot.
       var rawExtname = options.viewExtension.substr(1);
 
-      app.engine(rawExtname, (0, _expressHandlebars2.default)({
-        helpers: _templatesHelpers2.default,
-        extname: options.viewExtension,
-        defaultLayout: options.defaultLayout
-      }));
+      app.engine(rawExtname, (0, _hbsEngine2.default)(context, options).engine);
       app.set('view engine', rawExtname);
       app.set('views', options.viewsPath);
 
