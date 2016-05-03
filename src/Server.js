@@ -1,8 +1,8 @@
 import path from 'path';
 import fileExists from 'file-exists';
 import express from 'express';
-import hbs from './hbsEngine';
 import DataDiscoverer from './DataDiscoverer';
+import nunjucksEngine from './nunjucksEngine';
 
 export default class Server {
 
@@ -12,8 +12,7 @@ export default class Server {
       settingsFile: 'site.yml',
       contentPath: 'content',
       publicPath: 'public',
-      viewExtension: '.hbs',
-      defaultLayout: 'base',
+      viewExtension: '.twig',
       viewsPath: 'views'
     }, options);
 
@@ -32,14 +31,21 @@ export default class Server {
 
     this.middlewares.forEach(middleware => app.use(middleware));
 
-    app.use(express.static(options.publicPath, { index: false }));
+    app.use(express.static(options.publicPath, {
+      index: false,
+      redirect: false
+    }));
 
     // Get the raw extension without the dot.
     const rawExtname = options.viewExtension.substr(1);
 
-    app.engine(rawExtname, hbs(context, options).engine);
     app.set('view engine', rawExtname);
     app.set('views', options.viewsPath);
+
+    const nunjucks = nunjucksEngine(options.viewsPath, {
+      express: app,
+      watch: true,
+    });
 
     app.get('*', (req, res) => {
       const view = req.params[0].substr(1),

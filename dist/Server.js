@@ -18,13 +18,13 @@ var _express = require('express');
 
 var _express2 = _interopRequireDefault(_express);
 
-var _hbsEngine = require('./hbsEngine');
-
-var _hbsEngine2 = _interopRequireDefault(_hbsEngine);
-
 var _DataDiscoverer = require('./DataDiscoverer');
 
 var _DataDiscoverer2 = _interopRequireDefault(_DataDiscoverer);
+
+var _nunjucksEngine = require('./nunjucksEngine');
+
+var _nunjucksEngine2 = _interopRequireDefault(_nunjucksEngine);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -41,8 +41,7 @@ var Server = function () {
       settingsFile: 'site.yml',
       contentPath: 'content',
       publicPath: 'public',
-      viewExtension: '.hbs',
-      defaultLayout: 'base',
+      viewExtension: '.twig',
       viewsPath: 'views'
     }, options);
 
@@ -68,14 +67,21 @@ var Server = function () {
         return app.use(middleware);
       });
 
-      app.use(_express2.default.static(options.publicPath, { index: false }));
+      app.use(_express2.default.static(options.publicPath, {
+        index: false,
+        redirect: false
+      }));
 
       // Get the raw extension without the dot.
       var rawExtname = options.viewExtension.substr(1);
 
-      app.engine(rawExtname, (0, _hbsEngine2.default)(context, options).engine);
       app.set('view engine', rawExtname);
       app.set('views', options.viewsPath);
+
+      var nunjucks = (0, _nunjucksEngine2.default)(options.viewsPath, {
+        express: app,
+        watch: true
+      });
 
       app.get('*', function (req, res) {
         var view = req.params[0].substr(1),

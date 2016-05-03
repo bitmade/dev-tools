@@ -1,20 +1,20 @@
 import path from 'path';
-import hbs from './hbsEngine';
+import nunjucksEngine from './nunjucksEngine';
 import Finder from 'fs-finder';
 import fs from 'fs-extra';
 import DataDiscoverer from './DataDiscoverer';
 
 export default class Renderer {
 
-  constructor(context, viewsPath, settingsFile, contentDir, viewExtension, publicPath, defaultLayout) {
+  constructor(context, viewsPath, settingsFile, contentDir, viewExtension, publicPath) {
     this.context = context;
-    this.hbs = hbs(context, { defaultLayout, viewExtension, viewsPath });
     this.viewsPath = path.join(context, viewsPath);
-    this.layoutsDir = path.relative(viewsPath, this.hbs.layoutsDir);
-    this.partialsDir = path.relative(viewsPath, this.hbs.partialsDir);
+    this.layoutsDir = 'layouts';
+    this.partialsDir = 'partials';
     this.viewExtension = viewExtension;
     this.publicPath = publicPath;
     this.data = new DataDiscoverer(context, settingsFile, contentDir).load();
+    this.engine = nunjucksEngine(this.viewsPath);
   }
 
   run() {
@@ -41,7 +41,7 @@ export default class Renderer {
   }
 
   renderTemplate(file) {
-    this.hbs.renderView(file.original, this.data, (err, template) => {
+    this.engine.render(file.original, this.data, (err, template) => {
       fs.ensureDir(file.dir, () => {
         fs.writeFile(path.join(file.dir, file.name), template)
       });

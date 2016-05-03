@@ -23,11 +23,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Exporter = function () {
-  function Exporter(context, viewsPath, settingsFile, contentDir, viewsExtension, publicPath, defaultLayout, webpackConfig) {
+  function Exporter(context, viewsPath, settingsFile, contentDir, viewsExtension, publicPath, webpackConfig) {
     _classCallCheck(this, Exporter);
 
     this.compiler = new _Compiler2.default(new _webpackConfig2.default().extend(webpackConfig));
-    this.renderer = new _Renderer2.default(context, viewsPath, settingsFile, contentDir, viewsExtension, publicPath, defaultLayout);
+    this.renderer = new _Renderer2.default(context, viewsPath, settingsFile, contentDir, viewsExtension, publicPath);
   }
 
   _createClass(Exporter, [{

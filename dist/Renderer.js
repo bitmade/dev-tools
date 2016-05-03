@@ -10,9 +10,9 @@ var _path = require('path');
 
 var _path2 = _interopRequireDefault(_path);
 
-var _hbsEngine = require('./hbsEngine');
+var _nunjucksEngine = require('./nunjucksEngine');
 
-var _hbsEngine2 = _interopRequireDefault(_hbsEngine);
+var _nunjucksEngine2 = _interopRequireDefault(_nunjucksEngine);
 
 var _fsFinder = require('fs-finder');
 
@@ -31,17 +31,17 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Renderer = function () {
-  function Renderer(context, viewsPath, settingsFile, contentDir, viewExtension, publicPath, defaultLayout) {
+  function Renderer(context, viewsPath, settingsFile, contentDir, viewExtension, publicPath) {
     _classCallCheck(this, Renderer);
 
     this.context = context;
-    this.hbs = (0, _hbsEngine2.default)(context, { defaultLayout: defaultLayout, viewExtension: viewExtension, viewsPath: viewsPath });
     this.viewsPath = _path2.default.join(context, viewsPath);
-    this.layoutsDir = _path2.default.relative(viewsPath, this.hbs.layoutsDir);
-    this.partialsDir = _path2.default.relative(viewsPath, this.hbs.partialsDir);
+    this.layoutsDir = 'layouts';
+    this.partialsDir = 'partials';
     this.viewExtension = viewExtension;
     this.publicPath = publicPath;
     this.data = new _DataDiscoverer2.default(context, settingsFile, contentDir).load();
+    this.engine = (0, _nunjucksEngine2.default)(this.viewsPath);
   }
 
   _createClass(Renderer, [{
@@ -67,7 +67,7 @@ var Renderer = function () {
   }, {
     key: 'renderTemplate',
     value: function renderTemplate(file) {
-      this.hbs.renderView(file.original, this.data, function (err, template) {
+      this.engine.render(file.original, this.data, function (err, template) {
         _fsExtra2.default.ensureDir(file.dir, function () {
           _fsExtra2.default.writeFile(_path2.default.join(file.dir, file.name), template);
         });

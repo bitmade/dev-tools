@@ -4,7 +4,7 @@ var program = require('commander');
 var Exporter = require('../index').Exporter;
 
 program
-  .version('0.0.1')
+  .version('2.0.0')
   .option('--compile-assets')
   .option('--compile-templates')
   .parse(process.argv);
@@ -14,9 +14,8 @@ var exporter = new Exporter(
   'views',
   'site.yml',
   'content',
-  '.hbs',
+  '.twig',
   'public',
-  'base',
   path.join(process.cwd(), 'webpack.config.js')
 );
 
