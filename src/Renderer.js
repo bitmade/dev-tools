@@ -1,5 +1,5 @@
 import path from 'path';
-import nunjucksEngine from './nunjucksEngine';
+import twigEngine from './twigEngine';
 import Finder from 'fs-finder';
 import fs from 'fs-extra';
 import DataDiscoverer from './DataDiscoverer';
@@ -14,7 +14,7 @@ export default class Renderer {
     this.viewExtension = viewExtension;
     this.publicPath = publicPath;
     this.data = new DataDiscoverer(context, settingsFile, contentDir).load();
-    this.engine = nunjucksEngine(this.viewsPath);
+    this.engine = twigEngine(path.resolve(this.viewsPath));
   }
 
   run() {
@@ -41,7 +41,7 @@ export default class Renderer {
   }
 
   renderTemplate(file) {
-    this.engine.render(file.original, this.data, (err, template) => {
+    this.engine(file.original, this.data, (err, template) => {
       fs.ensureDir(file.dir, () => {
         fs.writeFile(path.join(file.dir, file.name), template)
       });

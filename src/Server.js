@@ -2,7 +2,7 @@ import path from 'path';
 import fileExists from 'file-exists';
 import express from 'express';
 import DataDiscoverer from './DataDiscoverer';
-import nunjucksEngine from './nunjucksEngine';
+import twigEngine from './twigEngine';
 
 export default class Server {
 
@@ -42,10 +42,7 @@ export default class Server {
     app.set('view engine', rawExtname);
     app.set('views', options.viewsPath);
 
-    const nunjucks = nunjucksEngine(options.viewsPath, {
-      express: app,
-      watch: true,
-    });
+    app.engine(options.viewExtension, twigEngine(path.resolve(options.viewsPath)));
 
     app.get('*', (req, res) => {
       const view = req.params[0].substr(1),

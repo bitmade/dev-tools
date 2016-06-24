@@ -1,10 +1,10 @@
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _path = require('path');
 
@@ -22,9 +22,9 @@ var _DataDiscoverer = require('./DataDiscoverer');
 
 var _DataDiscoverer2 = _interopRequireDefault(_DataDiscoverer);
 
-var _nunjucksEngine = require('./nunjucksEngine');
+var _twigEngine = require('./twigEngine');
 
-var _nunjucksEngine2 = _interopRequireDefault(_nunjucksEngine);
+var _twigEngine2 = _interopRequireDefault(_twigEngine);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -63,6 +63,7 @@ var Server = function () {
       var context = this.context;
       var data = this.data;
 
+
       this.middlewares.forEach(function (middleware) {
         return app.use(middleware);
       });
@@ -78,10 +79,7 @@ var Server = function () {
       app.set('view engine', rawExtname);
       app.set('views', options.viewsPath);
 
-      var nunjucks = (0, _nunjucksEngine2.default)(options.viewsPath, {
-        express: app,
-        watch: true
-      });
+      app.engine(options.viewExtension, (0, _twigEngine2.default)(_path2.default.resolve(options.viewsPath)));
 
       app.get('*', function (req, res) {
         var view = req.params[0].substr(1),

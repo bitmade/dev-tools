@@ -1,18 +1,18 @@
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _path = require('path');
 
 var _path2 = _interopRequireDefault(_path);
 
-var _nunjucksEngine = require('./nunjucksEngine');
+var _twigEngine = require('./twigEngine');
 
-var _nunjucksEngine2 = _interopRequireDefault(_nunjucksEngine);
+var _twigEngine2 = _interopRequireDefault(_twigEngine);
 
 var _fsFinder = require('fs-finder');
 
@@ -41,7 +41,7 @@ var Renderer = function () {
     this.viewExtension = viewExtension;
     this.publicPath = publicPath;
     this.data = new _DataDiscoverer2.default(context, settingsFile, contentDir).load();
-    this.engine = (0, _nunjucksEngine2.default)(this.viewsPath);
+    this.engine = (0, _twigEngine2.default)(_path2.default.resolve(this.viewsPath));
   }
 
   _createClass(Renderer, [{
@@ -67,7 +67,7 @@ var Renderer = function () {
   }, {
     key: 'renderTemplate',
     value: function renderTemplate(file) {
-      this.engine.render(file.original, this.data, function (err, template) {
+      this.engine(file.original, this.data, function (err, template) {
         _fsExtra2.default.ensureDir(file.dir, function () {
           _fsExtra2.default.writeFile(_path2.default.join(file.dir, file.name), template);
         });
