@@ -11,7 +11,7 @@ program
 
 var exporter = new Exporter(
   process.cwd(),
-  'views',
+  'twig',
   'site.yml',
   'content',
   '.twig',

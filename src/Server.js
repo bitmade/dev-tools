@@ -13,7 +13,7 @@ export default class Server {
       contentPath: 'content',
       publicPath: 'public',
       viewExtension: '.twig',
-      viewsPath: 'views'
+      viewsPath: 'twig'
     }, options);
 
     this.app = express();

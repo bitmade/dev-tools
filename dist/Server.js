@@ -42,7 +42,7 @@ var Server = function () {
       contentPath: 'content',
       publicPath: 'public',
       viewExtension: '.twig',
-      viewsPath: 'views'
+      viewsPath: 'twig'
     }, options);
 
     this.app = (0, _express2.default)();
