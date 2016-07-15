@@ -80,7 +80,7 @@ function getPlugins () {
         port: 3000,
         proxy: 'http://localhost:3010/',
         open: false,
-        files: [path.resolve('views', '**', '*.twig')]
+        files: [path.resolve('twig', '**', '*.twig')]
       }));
       break;
   }
