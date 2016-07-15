@@ -12,5 +12,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 exports.default = function (path) {
   var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-  return _nodeTwig2.default.createEngine(Object.assign({}, { root: path }, opts));
+  return _nodeTwig2.default.createEngine(Object.assign({}, {
+    root: path,
+    aliases: {
+      twig: path
+    }
+  }, opts));
 };
