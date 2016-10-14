@@ -106,12 +106,12 @@ function setupApp(mode) {
         quiet: true,
       }));
       break;
-    case 'watch':
+    case 'write':
       // Invoke the compiler with no options and a fake callback.
       compiler.watch({}, function () {});
       break;
     default:
-      console.log(chalk.red('The given type "' + type + '" was not found.'));
+      console.log(chalk.red('The given type "' + mode + '" was not found.'));
   }
 
   // Serve static files from the public folder. To retrieve a file inside this directory
