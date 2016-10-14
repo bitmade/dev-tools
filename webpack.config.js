@@ -1,20 +1,12 @@
 var path = require('path');
-var WebpackConfig = require('webpack-config');
-var env = require('./dist/environment');
+var env = require('./utils/environment');
 var webpack = require('webpack');
 var BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var autoprefixer = require('autoprefixer');
 var assets = require('postcss-assets');
-var style = require.resolve('style-loader');
-var raw = require.resolve('raw-loader');
-var sass = require.resolve('sass-loader');
-var postcss = require.resolve('postcss-loader');
-var babel = require.resolve('babel-loader');
-var presetReact = require.resolve('babel-preset-react');
-var presetES2015 = require.resolve('babel-preset-es2015');
 
-module.exports = new WebpackConfig().merge({
+module.exports = {
   debug: env.isDevelopment(),
   devtool: env.isProduction() ? false : 'eval-source-map', //more info:https://webpack.github.io/docs/build-performance.html#sourcemaps and https://webpack.github.io/docs/configuration.html#devtool
   entry: path.resolve('js', 'main.js'),
@@ -28,15 +20,23 @@ module.exports = new WebpackConfig().merge({
       {
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
-        loader: babel,
+        loader: require.resolve('babel-loader'),
         query: {
-          presets: [presetReact, presetES2015]
+          presets: [
+            require.resolve('babel-preset-react'),
+            require.resolve('babel-preset-es2015'),
+          ]
         }
       },
       {
         test: /(\.css|\.scss)$/,
         include: path.resolve('sass'),
-        loader: ExtractTextPlugin.extract(style, [raw, postcss, sass].join('!'))
+        loader: ExtractTextPlugin.extract(
+          require.resolve('style-loader'), [
+            require.resolve('raw-loader'),
+            require.resolve('postcss-loader'),
+            require.resolve('sass-loader'),
+          ].join('!'))
       }
     ]
   },
@@ -50,7 +50,7 @@ module.exports = new WebpackConfig().merge({
     ];
   },
   plugins: getPlugins()
-});
+};
 
 function getPlugins () {
 
@@ -77,6 +77,7 @@ function getPlugins () {
       plugins.push(new webpack.NoErrorsPlugin());
       plugins.push(new BrowserSyncPlugin({
         host: 'localhost',
+        logLevel: 'silent',
         port: 3000,
         proxy: 'http://localhost:3010/',
         open: false,
