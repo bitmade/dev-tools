@@ -1,7 +1,6 @@
 var path = require('path');
 var env = require('./utils/environment');
 var webpack = require('webpack');
-var BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var autoprefixer = require('autoprefixer');
 var assets = require('postcss-assets');
@@ -75,14 +74,6 @@ function getPlugins () {
       break;
     case 'development':
       plugins.push(new webpack.NoErrorsPlugin());
-      plugins.push(new BrowserSyncPlugin({
-        host: 'localhost',
-        logLevel: 'silent',
-        port: 3000,
-        proxy: 'http://localhost:3010/',
-        open: false,
-        files: [path.resolve('twig', '**', '*.twig')]
-      }));
       break;
   }
 

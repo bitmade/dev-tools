@@ -19,9 +19,17 @@ var fileExists = require('file-exists');
 var express = require('express');
 var webpack = require('webpack');
 var webpackDevMiddleware = require('webpack-dev-middleware');
+var _ = require('lodash');
+var bs = require('browser-sync').create();
 var twig = require('../utils/twig');
 var config = require('../utils/config');
 var compiler;
+var lastTimestamps;
+var REASONS = {
+  CSS: 'css',
+  JS: 'js',
+  UNKNOWN: 'unknown',
+};
 
 if (!argv.mode) {
   console.log(chalk.red('You must specify the --mode option using "stream" or "write".'));
@@ -29,8 +37,20 @@ if (!argv.mode) {
   process.exit(0);
 }
 
+setupBrowserSync();
 setupCompiler();
 setupApp(argv.mode);
+
+function setupBrowserSync() {
+  bs.init({
+    host: 'localhost',
+    logLevel: 'silent',
+    port: 3000,
+    proxy: 'http://localhost:3010/',
+    open: false,
+    files: [path.resolve('twig', '**', '*.twig')]
+  });
+}
 
 function setupCompiler() {
   compiler = webpack(config);
@@ -42,6 +62,8 @@ function setupCompiler() {
 
   compiler.plugin('done', function (stats) {
     clearConsole();
+
+    lastTimestamps = triggerReload(stats, lastTimestamps);
 
     var messages = stats.toJson({}, true);
 
@@ -143,4 +165,59 @@ function setupApp(mode) {
   // Listen on port 3010 so that BrowserSync can listen on port 3000 and proxy
   // this server to inject the scripts needed for BrowserSync to run.
   app.listen(3010);
+}
+
+function triggerReload(stats, lastTimestamps) {
+  // Get the current compilation.
+  var compilation = stats.compilation;
+  // Get all timestamps from all related files.
+  var currentTimestamps = compilation.compiler.fileTimestamps;
+  var files = Object.keys(currentTimestamps);
+  var reason = REASONS.UNKNOWN;
+
+  // We only care about getting the changed file on subsequent runs when data about
+  // previous compilations is available.
+  if (lastTimestamps) {
+    // Get all files that are either new or have a higher timestamp since the last compilation.
+    var changed = files.filter(function (file) {
+      // If the file doesn't exist in the list it is new and therefore changed.
+      if (!lastTimestamps[file]) {
+        return true;
+      }
+
+      // If the current timestamp is greater then the previous, the file was changed.
+      return currentTimestamps[file] > lastTimestamps[file];
+    });
+
+    // Get the extensions to allow batched updates of the same file type.
+    var extensions = _.uniq(changed.map(function (file) {
+      return path.parse(file).ext.substr(1);
+    }));
+
+    if (extensions.length === 1) {
+      switch (extensions.pop()) {
+        case 'scss':
+        case 'sass':
+        case 'css':
+          reason = REASONS.CSS;
+          break;
+        case 'js':
+        case 'jsx':
+          reason = REASONS.JS;
+          break;
+        default:
+          reason = REASONS.UNKNOWN;
+      }
+    }
+  }
+
+  switch (reason) {
+    case REASONS.CSS:
+      bs.reload('*.css');
+      break;
+    default:
+      bs.reload();
+  }
+
+  return currentTimestamps;
 }
