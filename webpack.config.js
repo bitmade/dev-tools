@@ -1,13 +1,10 @@
-var path = require('path');
-var env = require('./utils/environment');
-var webpack = require('webpack');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var autoprefixer = require('autoprefixer');
-var assets = require('postcss-assets');
+const path = require('path');
+const env = require('./utils/environment');
+const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-module.exports = {
-  debug: env.isDevelopment(),
-  devtool: env.isProduction() ? false : 'eval-source-map', //more info:https://webpack.github.io/docs/build-performance.html#sourcemaps and https://webpack.github.io/docs/configuration.html#devtool
+const config = {
+  devtool: env.isProduction() ? false : 'cheap-module-eval-source-map',
   entry: path.resolve('js', 'main.js'),
   output: {
     path: path.resolve('public', 'build'),
@@ -15,67 +12,76 @@ module.exports = {
     filename: 'bundle.js'
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
-        loader: require.resolve('babel-loader'),
-        query: {
-          presets: [
-            require.resolve('babel-preset-react'),
-            require.resolve('babel-preset-es2015'),
-          ]
-        }
+        use: {
+          loader: require.resolve('babel-loader'),
+          options: {
+            presets: [require.resolve('babel-preset-env')],
+          }
+        },
       },
       {
         test: /(\.css|\.scss)$/,
         include: path.resolve('sass'),
-        loader: ExtractTextPlugin.extract(
-          require.resolve('style-loader'), [
-            require.resolve('raw-loader'),
-            require.resolve('postcss-loader'),
-            require.resolve('sass-loader'),
-          ].join('!'))
+        use: ExtractTextPlugin.extract({
+          fallback: require.resolve('style-loader'),
+          use: [
+            {
+              loader: require.resolve('css-loader'),
+              options: {
+                sourceMap: env.isDevelopment(),
+                minimize: env.isProduction(),
+              },
+            },
+            {
+              loader: require.resolve('postcss-loader'),
+              options: {
+                config: {
+                  path: __dirname + '/postcss.config.js'
+                },
+                sourceMap: env.isDevelopment() ? 'inline' : false,
+              },
+            },
+            {
+              loader: require.resolve('sass-loader'),
+              options: { sourceMap: env.isDevelopment() },
+            },
+          ],
+        }),
       }
-    ]
-  },
-  postcss: function () {
-    return [
-      autoprefixer,
-      assets({
-        loadPaths: ['images/'],
-        basePath: 'public/'
-      })
-    ];
+    ],
   },
   plugins: getPlugins()
 };
 
 function getPlugins () {
 
-  var GLOBALS = {
+  const GLOBALS = {
     'process.env.NODE_ENV': JSON.stringify(env.getEnvironment()),
     __DEV__: env.isDevelopment()
   };
 
-  var plugins = [
+  const plugins = [
     new ExtractTextPlugin('screen.css'),
-    new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.DefinePlugin(GLOBALS) //Tells React to build in prod mode. https://facebook.github.io/react/downloads.html
+    new webpack.DefinePlugin(GLOBALS),
   ];
 
   switch(env.getEnvironment()) {
     case 'production':
-      plugins.push(new webpack.optimize.DedupePlugin());
       plugins.push(new webpack.optimize.UglifyJsPlugin({
         minimize: true,
         sourceMap: false
       }));
       break;
     case 'development':
-      plugins.push(new webpack.NoErrorsPlugin());
+      plugins.push(new webpack.NoEmitOnErrorsPlugin());
       break;
   }
 
   return plugins;
 }
+
+module.exports = config;
