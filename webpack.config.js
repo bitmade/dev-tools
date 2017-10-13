@@ -9,7 +9,7 @@ const config = {
   output: {
     path: path.resolve('public', 'build'),
     publicPath: '/build/',
-    filename: 'bundle.js'
+    filename: 'bundle.js',
   },
   module: {
     rules: [
@@ -20,7 +20,7 @@ const config = {
           loader: require.resolve('babel-loader'),
           options: {
             presets: [require.resolve('babel-preset-env')],
-          }
+          },
         },
       },
       {
@@ -40,7 +40,7 @@ const config = {
               loader: require.resolve('postcss-loader'),
               options: {
                 config: {
-                  path: __dirname + '/postcss.config.js'
+                  path: __dirname + '/postcss.config.js',
                 },
                 sourceMap: env.isDevelopment() ? 'inline' : false,
               },
@@ -51,17 +51,16 @@ const config = {
             },
           ],
         }),
-      }
+      },
     ],
   },
-  plugins: getPlugins()
+  plugins: getPlugins(),
 };
 
-function getPlugins () {
-
+function getPlugins() {
   const GLOBALS = {
     'process.env.NODE_ENV': JSON.stringify(env.getEnvironment()),
-    __DEV__: env.isDevelopment()
+    __DEV__: env.isDevelopment(),
   };
 
   const plugins = [
@@ -69,12 +68,14 @@ function getPlugins () {
     new webpack.DefinePlugin(GLOBALS),
   ];
 
-  switch(env.getEnvironment()) {
+  switch (env.getEnvironment()) {
     case 'production':
-      plugins.push(new webpack.optimize.UglifyJsPlugin({
-        minimize: true,
-        sourceMap: false
-      }));
+      plugins.push(
+        new webpack.optimize.UglifyJsPlugin({
+          minimize: true,
+          sourceMap: false,
+        })
+      );
       break;
     case 'development':
       plugins.push(new webpack.NoEmitOnErrorsPlugin());

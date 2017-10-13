@@ -1,4 +1,5 @@
-const environment = process.env.NODE_ENV == 'production' ? 'production' : 'development';
+const environment =
+  process.env.NODE_ENV == 'production' ? 'production' : 'development';
 
 exports.isDevelopment = () => environment == 'development';
 

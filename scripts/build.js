@@ -35,11 +35,10 @@ if (argv.js || argv.css) {
 }
 
 if (argv.html) {
-  Finder
-    .from(templatePath)
+  Finder.from(templatePath)
     .exclude([
       path.join(process.cwd(), 'twig', 'partials'),
-      path.join(process.cwd(), 'twig', 'layouts')
+      path.join(process.cwd(), 'twig', 'layouts'),
     ])
     .findFiles('.twig')
     .map(buildTemplateInfo)
@@ -52,7 +51,7 @@ if (argv.html) {
 function runCompiler() {
   const compiler = webpack(config);
 
-  compiler.plugin('done', (stats) => {
+  compiler.plugin('done', stats => {
     const messages = stats.toJson({}, true);
 
     if (!stats.hasErrors()) {
@@ -63,7 +62,7 @@ function runCompiler() {
     if (stats.hasErrors()) {
       console.log(chalk.red('Failed to compile.'));
       console.log();
-      messages.errors.forEach((message) => {
+      messages.errors.forEach(message => {
         console.log(message);
         console.log();
       });
@@ -74,7 +73,7 @@ function runCompiler() {
     if (stats.hasWarnings()) {
       console.log(chalk.yellow('Compiled with warnings.'));
       console.log();
-      messages.warnings.forEach((message) => {
+      messages.warnings.forEach(message => {
         console.log(message);
         console.log();
       });
@@ -84,7 +83,7 @@ function runCompiler() {
   compiler.run(noop);
 }
 
-function buildTemplateInfo (original) {
+function buildTemplateInfo(original) {
   const file = path.parse(path.relative(templatePath, original));
 
   // If the filename is not index, append the name to file.dir
@@ -93,8 +92,8 @@ function buildTemplateInfo (original) {
   return {
     original: original,
     dir: path.join(process.cwd(), 'public', dir),
-    name: 'index.html'
-  }
+    name: 'index.html',
+  };
 }
 
 function renderTemplate(file) {

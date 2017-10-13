@@ -9,7 +9,9 @@ switch (script) {
     const result = spawn.sync(
       'node',
       [require.resolve('../scripts/' + script)].concat(args),
-      {stdio: 'inherit'}
+      {
+        stdio: 'inherit',
+      }
     );
     process.exit(result.status);
     break;

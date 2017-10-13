@@ -34,7 +34,9 @@ let compiler;
 let lastTimestamps;
 
 if (!argv.mode) {
-  console.log(chalk.red('You must specify the --mode option using "stream" or "write".'));
+  console.log(
+    chalk.red('You must specify the --mode option using "stream" or "write".')
+  );
   console.log();
   process.exit(0);
 }
@@ -50,7 +52,7 @@ function setupBrowserSync() {
     port: 3000,
     proxy: 'http://localhost:3010/',
     open: false,
-    files: [path.resolve('twig', '**', '*.twig')]
+    files: [path.resolve('twig', '**', '*.twig')],
   });
 }
 
@@ -62,7 +64,7 @@ function setupCompiler() {
     console.log('Compiling...');
   });
 
-  compiler.plugin('done', (stats) => {
+  compiler.plugin('done', stats => {
     clearConsole();
 
     lastTimestamps = triggerReload(stats, lastTimestamps);
@@ -77,14 +79,16 @@ function setupCompiler() {
       console.log('  ' + chalk.cyan('http://localhost:3000/'));
       console.log();
       console.log('Note that the development build is not optimized.');
-      console.log('To create a production build, use ' + chalk.cyan('npm run build') + '.');
+      console.log(
+        'To create a production build, use ' + chalk.cyan('npm run build') + '.'
+      );
       console.log();
     }
 
     if (stats.hasErrors()) {
       console.log(chalk.red('Failed to compile.'));
       console.log();
-      messages.errors.forEach((message) => {
+      messages.errors.forEach(message => {
         console.log(message);
         console.log();
       });
@@ -95,7 +99,7 @@ function setupCompiler() {
     if (stats.hasWarnings()) {
       console.log(chalk.yellow('Compiled with warnings.'));
       console.log();
-      messages.warnings.forEach((message) => {
+      messages.warnings.forEach(message => {
         console.log(message);
         console.log();
       });
@@ -125,10 +129,12 @@ function setupApp(mode) {
   switch (mode) {
     case 'stream':
       // Build temporary assets using the Webpack dev middleware.
-      app.use(webpackDevMiddleware(compiler, {
-        publicPath: config.output.publicPath,
-        quiet: true,
-      }));
+      app.use(
+        webpackDevMiddleware(compiler, {
+          publicPath: config.output.publicPath,
+          quiet: true,
+        })
+      );
       break;
     case 'write':
       // Invoke the compiler with no options and a fake callback.
@@ -144,10 +150,12 @@ function setupApp(mode) {
   // and may then be accessed by calling /build/bundle.js.
   // We do also disable any automation like adding trailing slashes or resolving index files because
   // this might interfere with our template handling.
-  app.use(express.static('public', {
-    index: false,
-    redirect: false
-  }));
+  app.use(
+    express.static('public', {
+      index: false,
+      redirect: false,
+    })
+  );
 
   // Catch all requests because we don't request the template files directly but
   // with a route-like architecture.
@@ -181,7 +189,7 @@ function triggerReload(stats, lastTimestamps) {
   // previous compilations is available.
   if (lastTimestamps) {
     // Get all files that are either new or have a higher timestamp since the last compilation.
-    const changed = files.filter((file) => {
+    const changed = files.filter(file => {
       // If the file doesn't exist in the list it is new and therefore changed.
       if (!lastTimestamps[file]) {
         return true;
@@ -192,9 +200,9 @@ function triggerReload(stats, lastTimestamps) {
     });
 
     // Get the extensions to allow batched updates of the same file type.
-    const extensions = _.uniq(changed.map((file) => (
-      path.parse(file).ext.substr(1)
-    )));
+    const extensions = _.uniq(
+      changed.map(file => path.parse(file).ext.substr(1))
+    );
 
     if (extensions.length === 1) {
       switch (extensions.pop()) {
