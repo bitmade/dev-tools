@@ -159,7 +159,7 @@ function setupApp(mode) {
 
     // Check if the requested template exists in the filesystem and render it
     // if it does. Invoke the next listener on the app stack otherwise.
-    fileExists(path.join(process.cwd(), 'twig', template + '.twig'))
+    fileExists.sync(path.join(process.cwd(), 'twig', template + '.twig'))
       ? res.render(template)
       : next();
   });
