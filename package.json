@@ -1,6 +1,6 @@
 {
   "name": "@bitmade/dev-tools",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "A package that contains development tools used at Bitmade.",
   "author": "Manuel Moritz-Schliesing <manuel@bitmade.de>",
   "license": "MIT",
