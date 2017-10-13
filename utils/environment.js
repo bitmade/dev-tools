@@ -1,13 +1,7 @@
-var environment = process.env.NODE_ENV == 'production' ? 'production' : 'development';
+const environment = process.env.NODE_ENV == 'production' ? 'production' : 'development';
 
-exports.isDevelopment = function () {
-  return environment == 'development';
-};
+exports.isDevelopment = () => environment == 'development';
 
-exports.isProduction = function () {
-  return environment == 'production';
-};
+exports.isProduction = () => environment == 'production';
 
-exports.getEnvironment = function () {
-  return environment;
-};
+exports.getEnvironment = () => environment;

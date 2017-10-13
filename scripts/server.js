@@ -11,25 +11,27 @@ process.env.NODE_ENV = 'development';
 // that have already been set.
 require('dotenv').config({ silent: true });
 
-var chalk = require('chalk');
-var argv = require('minimist')(process.argv.slice(2));
-var path = require('path');
-var clearConsole = require('clear');
-var fileExists = require('file-exists');
-var express = require('express');
-var webpack = require('webpack');
-var webpackDevMiddleware = require('webpack-dev-middleware');
-var _ = require('lodash');
-var bs = require('browser-sync').create();
-var twig = require('../utils/twig');
-var config = require('../utils/config');
-var compiler;
-var lastTimestamps;
-var REASONS = {
+const chalk = require('chalk');
+const argv = require('minimist')(process.argv.slice(2));
+const path = require('path');
+const clearConsole = require('clear');
+const fileExists = require('file-exists');
+const express = require('express');
+const webpack = require('webpack');
+const webpackDevMiddleware = require('webpack-dev-middleware');
+const noop = require('noop-fn');
+const _ = require('lodash');
+const bs = require('browser-sync').create();
+const twig = require('../utils/twig');
+const config = require('../utils/config');
+const REASONS = {
   CSS: 'css',
   JS: 'js',
   UNKNOWN: 'unknown',
 };
+
+let compiler;
+let lastTimestamps;
 
 if (!argv.mode) {
   console.log(chalk.red('You must specify the --mode option using "stream" or "write".'));
@@ -55,17 +57,17 @@ function setupBrowserSync() {
 function setupCompiler() {
   compiler = webpack(config);
 
-  compiler.plugin('invalid', function() {
+  compiler.plugin('invalid', () => {
     clearConsole();
     console.log('Compiling...');
   });
 
-  compiler.plugin('done', function (stats) {
+  compiler.plugin('done', (stats) => {
     clearConsole();
 
     lastTimestamps = triggerReload(stats, lastTimestamps);
 
-    var messages = stats.toJson({}, true);
+    const messages = stats.toJson({}, true);
 
     if (!stats.hasErrors() && !stats.hasWarnings()) {
       console.log(chalk.green('Compiled successfully!'));
@@ -82,7 +84,7 @@ function setupCompiler() {
     if (stats.hasErrors()) {
       console.log(chalk.red('Failed to compile.'));
       console.log();
-      messages.errors.forEach(function (message) {
+      messages.errors.forEach((message) => {
         console.log(message);
         console.log();
       });
@@ -93,7 +95,7 @@ function setupCompiler() {
     if (stats.hasWarnings()) {
       console.log(chalk.yellow('Compiled with warnings.'));
       console.log();
-      messages.warnings.forEach(function (message) {
+      messages.warnings.forEach((message) => {
         console.log(message);
         console.log();
       });
@@ -102,7 +104,7 @@ function setupCompiler() {
 }
 
 function setupApp(mode) {
-  var app = express();
+  const app = express();
 
   // Configure the view engine. We use node-twig here to get the full power of the "real",
   // native Twig PHP library.
@@ -130,7 +132,7 @@ function setupApp(mode) {
       break;
     case 'write':
       // Invoke the compiler with no options and a fake callback.
-      compiler.watch({}, function () {});
+      compiler.watch({}, noop);
       break;
     default:
       console.log(chalk.red('The given type "' + mode + '" was not found.'));
@@ -149,11 +151,11 @@ function setupApp(mode) {
 
   // Catch all requests because we don't request the template files directly but
   // with a route-like architecture.
-  app.get('*', function (req, res, next) {
+  app.get('*', (req, res, next) => {
     // Get the requested path without the leading slash.
-    var route = req.params[0].substr(1);
+    const route = req.params[0].substr(1);
     // If the path is empty we need the index page.
-    var template = route === '' ? 'index' : route;
+    const template = route === '' ? 'index' : route;
 
     // Check if the requested template exists in the filesystem and render it
     // if it does. Invoke the next listener on the app stack otherwise.
@@ -169,17 +171,17 @@ function setupApp(mode) {
 
 function triggerReload(stats, lastTimestamps) {
   // Get the current compilation.
-  var compilation = stats.compilation;
+  const compilation = stats.compilation;
   // Get all timestamps from all related files.
-  var currentTimestamps = compilation.compiler.fileTimestamps;
-  var files = Object.keys(currentTimestamps);
-  var reason = REASONS.UNKNOWN;
+  const currentTimestamps = compilation.compiler.fileTimestamps;
+  const files = Object.keys(currentTimestamps);
+  let reason = REASONS.UNKNOWN;
 
   // We only care about getting the changed file on subsequent runs when data about
   // previous compilations is available.
   if (lastTimestamps) {
     // Get all files that are either new or have a higher timestamp since the last compilation.
-    var changed = files.filter(function (file) {
+    const changed = files.filter((file) => {
       // If the file doesn't exist in the list it is new and therefore changed.
       if (!lastTimestamps[file]) {
         return true;
@@ -190,9 +192,9 @@ function triggerReload(stats, lastTimestamps) {
     });
 
     // Get the extensions to allow batched updates of the same file type.
-    var extensions = _.uniq(changed.map(function (file) {
-      return path.parse(file).ext.substr(1);
-    }));
+    const extensions = _.uniq(changed.map((file) => (
+      path.parse(file).ext.substr(1)
+    )));
 
     if (extensions.length === 1) {
       switch (extensions.pop()) {

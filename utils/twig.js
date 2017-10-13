@@ -1,9 +1,9 @@
-var twig = require('node-twig');
-var path = require('path');
+const twig = require('node-twig');
+const path = require('path');
 
-var templatePath = path.join(process.cwd(), 'twig');
+const templatePath = path.join(process.cwd(), 'twig');
 
-var engine = twig.createEngine({
+const engine = twig.createEngine({
   root: templatePath,
   aliases: {
     twig: templatePath,

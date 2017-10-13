@@ -11,20 +11,19 @@ process.env.NODE_ENV = 'production';
 // that have already been set.
 require('dotenv').config({ silent: true });
 
-var chalk = require('chalk');
-var argv = require('minimist')(process.argv.slice(2));
-var path = require('path');
-var noop = require('noop-fn');
-var clearConsole = require('clear');
-var webpack = require('webpack');
-var Finder = require('fs-finder');
-var fs = require('fs-extra');
-var config = require('../utils/config');
-var twig = require('../utils/twig');
+const chalk = require('chalk');
+const argv = require('minimist')(process.argv.slice(2));
+const path = require('path');
+const noop = require('noop-fn');
+const clearConsole = require('clear');
+const webpack = require('webpack');
+const Finder = require('fs-finder');
+const fs = require('fs-extra');
+const config = require('../utils/config');
+const twig = require('../utils/twig');
 
 // Load the default webpack.config.js from the dev-tools directory or the project directory.
-var compiler = webpack(config);
-var templatePath = path.join(process.cwd(), 'twig');
+const templatePath = path.join(process.cwd(), 'twig');
 
 clearConsole();
 console.log();
@@ -51,10 +50,10 @@ if (argv.html) {
 }
 
 function runCompiler() {
-  var compiler = webpack(config);
+  const compiler = webpack(config);
 
-  compiler.plugin('done', function (stats) {
-    var messages = stats.toJson({}, true);
+  compiler.plugin('done', (stats) => {
+    const messages = stats.toJson({}, true);
 
     if (!stats.hasErrors()) {
       console.log(chalk.green('Assets have been compiled successfully!'));
@@ -64,7 +63,7 @@ function runCompiler() {
     if (stats.hasErrors()) {
       console.log(chalk.red('Failed to compile.'));
       console.log();
-      messages.errors.forEach(function (message) {
+      messages.errors.forEach((message) => {
         console.log(message);
         console.log();
       });
@@ -75,7 +74,7 @@ function runCompiler() {
     if (stats.hasWarnings()) {
       console.log(chalk.yellow('Compiled with warnings.'));
       console.log();
-      messages.warnings.forEach(function (message) {
+      messages.warnings.forEach((message) => {
         console.log(message);
         console.log();
       });
@@ -86,10 +85,10 @@ function runCompiler() {
 }
 
 function buildTemplateInfo (original) {
-  var file = path.parse(path.relative(templatePath, original));
+  const file = path.parse(path.relative(templatePath, original));
 
   // If the filename is not index, append the name to file.dir
-  var dir = file.name != 'index' ? path.join(file.dir, file.name) : file.dir;
+  const dir = file.name != 'index' ? path.join(file.dir, file.name) : file.dir;
 
   return {
     original: original,
@@ -99,8 +98,8 @@ function buildTemplateInfo (original) {
 }
 
 function renderTemplate(file) {
-  twig(file.original, {}, function (err, template) {
-    fs.ensureDir(file.dir, function () {
+  twig(file.original, {}, (err, template) => {
+    fs.ensureDir(file.dir, () => {
       fs.writeFile(path.join(file.dir, file.name), template);
     });
   });
